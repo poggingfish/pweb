@@ -88,7 +88,7 @@ class Window(QMainWindow):
     def gotopage_hash(self, page: str, newhash: str):
         self.bookmarks[page]["hashdata"] = newhash
         json.dump(self.bookmarks, open(".browserdata/bookmarks.json", "w"))
-        self.updatebmbar()
+        self.load_bookmarks()
         self.gopage(page)
 
     def updatebmbar(self):
@@ -104,7 +104,7 @@ class Window(QMainWindow):
                 c = pweblib.read_document(url, sub, page)
                 h = hashlib.sha256(c.decode().encode()).hexdigest()
                 if h != self.bookmarks[i]["hashdata"]:
-                    button.pressed.connect(lambda _=i: self.gotopage_hash(_, h))
+                    button.pressed.connect(lambda _=i, h=h: self.gotopage_hash(_, h))
                     button.setStyleSheet("background-color: yellow") 
             except:
                 button.setStyleSheet("background-color: red") 
