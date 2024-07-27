@@ -3,18 +3,21 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 import pweblib
 
+home = "pweb.pog/index/index"
+
 class Window(QMainWindow):
     fs = 17
     def gopage(self):
         text = self.urlbar.text().split("/")
+        if text[0] == "":
+            self.urlbar.setText(home)
+            self.gopage()
         try:
             url = text[0]
             sub = text[1]
             page = text[2]
         except:
-            if len(text) == 0:
-                self.mainview.setPlainText("Invalid URL.")
-                return
+
             if len(text) == 1:
                 sub = "index"
                 page = "index"
@@ -49,7 +52,6 @@ class Window(QMainWindow):
         self.addToolBar(self.navbar)
         self.mainview = QPlainTextEdit()
         self.mainview.setReadOnly(True)
-        self.mainview.setPlainText("No page loaded!\nTry out poogle.pog/index/index!")
         self.FontUpKey = QShortcut(self)
         self.FontUpKey.setKey(Qt.Key.Key_Plus)
         self.FontUpKey.activated.connect(lambda: self.sizechange())
@@ -58,6 +60,8 @@ class Window(QMainWindow):
         self.FontDownKey.activated.connect(lambda: self.sizechange(False))
         self.setCentralWidget(self.mainview)
         self.sizechange()
+        self.urlbar.setText(home)
+        self.gopage()
         self.show()
 
 def main():
