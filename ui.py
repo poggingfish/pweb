@@ -7,11 +7,15 @@ home = "pweb.pog/index/index"
 
 class Window(QMainWindow):
     fs = 17
-    def gopage(self):
-        text = self.urlbar.text().split("/")
+    def gopage(self, url = ""):
+        if url != "":
+            text = url.split("/")
+        else:
+            text = self.urlbar.text().split("/")
         if text[0] == "":
             self.urlbar.setText(home)
-            self.gopage()
+            self.gopage(url=home)
+            return
         try:
             url = text[0]
             sub = text[1]
