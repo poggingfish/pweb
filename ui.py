@@ -12,8 +12,14 @@ class Window(QMainWindow):
             sub = text[1]
             page = text[2]
         except:
-            self.mainview.setPlainText("Invalid URL!")
-            return
+            if len(text) == 0:
+                self.mainview.setPlainText("Invalid URL.")
+                return
+            if len(text) == 1:
+                sub = "index"
+                page = "index"
+            if len(text) == 2:
+                page = "index"
         try:
             c = pweblib.read_document(url, sub, page)
         except:
