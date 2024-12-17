@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt, QFile, QTextStream
+from PyQt5.QtGui import QFont, QColor
 import pweblib
 import os
 import json
@@ -43,7 +43,11 @@ class Window(QMainWindow):
         except:
             self.mainview.setPlainText("Page not found!")
             return
-        self.mainview.setPlainText(c.decode())
+        self.mainview.clear()
+        cursor = self.mainview.textCursor()
+        fmt = cursor.charFormat()
+        fmt.setForeground(QColor('white'))
+        cursor.insertText(c.decode(), fmt)
         self.currurl = "/".join(text)
         self.currdata = c.decode()
 
@@ -54,8 +58,9 @@ class Window(QMainWindow):
         else:
             self.fs -= 1
         f.setPixelSize(self.fs)
-        self.navbar.setFont(f)
         self.mainview.setFont(f)
+        f.setPixelSize(19)
+        self.navbar.setFont(f)
         self.bookmarkbar.setFont(f)
 
     def add_bookmark(self):
@@ -69,7 +74,7 @@ class Window(QMainWindow):
         json.dump(self.bookmarks, open(".browserdata/bookmarks.json", "w"))
         self.updatebmbar()
 
-    def remove_bookmark(self, url, newhash):
+    def remove_bookmark(self, url):
         del self.bookmarks[url]
         json.dump(self.bookmarks, open(".browserdata/bookmarks.json", "w"))
         self.updatebmbar()
@@ -141,7 +146,7 @@ class Window(QMainWindow):
         self.bookmarkbar = QToolBar("bookmarks", self)
         self.addToolBarBreak()
         self.addToolBar(self.bookmarkbar)
-        self.mainview = QPlainTextEdit()
+        self.mainview = QTextEdit()
         self.mainview.setReadOnly(True)
         self.mainview.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.mainview.customContextMenuRequested.connect(self.showCtx)
@@ -156,6 +161,7 @@ class Window(QMainWindow):
         self.urlbar.setText(home)
         self.gopage()
         self.load_bookmarks()
+        self.setStyleSheet(open("MaterialDark.qss").read())
         self.show()
 
 def main():
